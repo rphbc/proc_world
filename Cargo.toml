@@ -7,6 +7,9 @@ edition = "2021"
 
 [dependencies]
 bevy = {version="0.12.0", default-features = false, features = ["bevy_asset","bevy_scene", "bevy_render","bevy_sprite","png", "x11",]}
+bevy-inspector-egui = "0.21.0"
+bevy_editor_pls = "0.6"
+egui = "*"
 bevy_pancam = "0.10.0"
 noise = "0.8"
 rand = "0.8.5"

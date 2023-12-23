@@ -6,7 +6,7 @@ use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use noise::{NoiseFn, Perlin, Fbm, MultiFractal};
 use rand::Rng;
 
-use procedural::{*, world::TileComponent};
+use procedural::{*, world::GroundComponent};
 use procedural::editor_mode::{*};
 use procedural::world::WorldPlugin;
 use procedural::beings::BeingsPlugin;
@@ -17,12 +17,12 @@ fn main() {
             BG_COLOR.0, BG_COLOR.1, BG_COLOR.2, 255,
         )))
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
-        // .add_plugins(PanCamPlugin)
-        // .add_plugins(
-        //     WorldInspectorPlugin::default().run_if(input_toggle_active(false, KeyCode::Key1)),
-        // )
-        .add_plugins(EditorPlugin::default())
-        .add_editor_window::<MyEditorWindow>()
+        .add_plugins(PanCamPlugin)
+        .add_plugins(
+            WorldInspectorPlugin::default().run_if(input_toggle_active(false, KeyCode::Key1)),
+        )
+        // .add_plugins(EditorPlugin::default())
+        // .add_editor_window::<MyEditorWindow>()
         .add_plugins(WorldPlugin)
         .add_plugins(BeingsPlugin)
         .insert_resource(Msaa::Off)
@@ -36,7 +36,7 @@ fn main() {
 fn handle_input(
     mut commands: Commands,
     keys: Res<Input<KeyCode>>,
-    tiles_query: Query<Entity, With<TileComponent>>,
+    tiles_query: Query<Entity, With<GroundComponent>>,
     asset_server: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {

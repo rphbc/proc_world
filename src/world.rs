@@ -6,14 +6,27 @@ use crate::configs::*;
 use crate::utils::grid_to_world;
 
 
-pub struct Tile {
+pub struct Ground {
     pos: (i32, i32),
     sprite: usize,
     z_index: i32,
+    temperature: f32
+}
+
+impl Ground {
+    fn new(pos: (i32, i32), sprite: usize, z_index: i32) -> Self {
+        let temperature = pos.1 as f32;
+        Self {
+            pos,
+            sprite,
+            z_index,
+            temperature
+        }
+    }
 }
 
 #[derive(Component)]
-pub struct TileComponent;
+pub struct GroundComponent;
 
 
 pub struct WorldPlugin;
@@ -54,6 +67,7 @@ fn gen_world(
     for x in 0..GRID_COLS {
         for y in 0..GRID_ROWS {
             let noise_val = perlin.get([x as f64 / NOISE_SCALE, y as f64 / NOISE_SCALE]) + NOISE_BIAS;
+            let noise_val2 = perlin.get([x as f64 / NOISE_SCALE *2.0, y as f64 / NOISE_SCALE*2.0]) + NOISE_BIAS;
             let choice = rng.gen_range(0.0..1.0);
             let (x, y) = (x as i32, y as i32);
 
@@ -62,19 +76,19 @@ fn gen_world(
                 occupied.insert((x, y));
             }
 
-            // // Mountain
-            // if noise_val > 0.3 && noise_val < 0.31 {
-            //     tiles.push(Tile::new((x, y), 10, 1));
-            // }
+            // grass
+            if noise_val > 0.3 && noise_val2 > 0.6 {
+                tiles.push(Ground::new((x, y), 10, 1));
+            }
 
             // Trees
-            if noise_val > 0.35 && noise_val < 0.99 {
-                if choice > 0.9 {
-                    tiles.push(Tile::new((x, y), rng.gen_range(7..=9), 1));
-                } else if choice > 0.8 {
-                    tiles.push(Tile::new((x,y), 6 , 1))
-                }
-            }
+            // if noise_val > 0.35 && noise_val < 0.99 {
+            //     if choice > 0.9 {
+            //         tiles.push(Ground::new((x, y), rng.gen_range(7..=9), 1));
+            //     } else if choice > 0.8 {
+            //         tiles.push(Ground::new((x,y), 6 , 1))
+            //     }
+            // }
 
             // // Bones
             // if noise_val > 0.6 && noise_val < 0.7 && choice >0.9 {
@@ -94,7 +108,7 @@ fn gen_world(
         if nei_count == 1 {
             continue;
         }
-        tiles.push(Tile::new((*x, *y), tile, 0));
+        tiles.push(Ground::new((*x, *y), tile, 0));
     }
 
     for tile in tiles.iter() {
@@ -109,7 +123,7 @@ fn gen_world(
                     .with_translation(vec3(x, y, tile.z_index as f32)),
                 ..default()
             },
-            TileComponent,
+            GroundComponent,
         ));
     }
 
@@ -145,12 +159,3 @@ fn get_tile((x, y): (i32, i32), occupied: &HashSet<(i32, i32)>) -> (usize, i32) 
 //     (x_center,y_center)
 // }
 
-impl Tile {
-    fn new(pos: (i32, i32), sprite: usize, z_index: i32) -> Self {
-        Self {
-            pos,
-            sprite,
-            z_index,
-        }
-    }
-}

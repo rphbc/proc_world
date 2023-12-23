@@ -1,7 +1,7 @@
 
 // BEINGS
 pub const BEINGS_NUMBER: usize = 20;
-pub const MAX_VEL: f32 = 5.0;
+pub const MAX_VEL: f32 = 2.0;
 
 // Perlin
 pub const NOISE_SCALE: f64 = 20.0;
